@@ -1,0 +1,1557 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>نظام المهام التعليمية</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Tahoma, Arial, sans-serif;
+            background: #f4f7fb;
+            color: #222;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1565c0, #0d47a1);
+            color: white;
+            text-align: center;
+            padding: 25px 15px;
+        }
+
+        .header h1 {
+            margin: 0 0 8px;
+            font-size: 30px;
+        }
+
+        .header p {
+            margin: 0;
+            font-size: 16px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 25px auto;
+            padding: 0 15px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 22px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 14px rgba(0,0,0,.08);
+        }
+
+        h2 {
+            margin-top: 0;
+            color: #0d47a1;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin: 14px 0 6px;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 9px;
+            font-family: inherit;
+            font-size: 16px;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        button {
+            border: 0;
+            border-radius: 9px;
+            padding: 12px 18px;
+            font-size: 16px;
+            font-family: inherit;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .primary {
+            background: #1565c0;
+            color: white;
+        }
+
+        .green {
+            background: #2e7d32;
+            color: white;
+        }
+
+        .red {
+            background: #c62828;
+            color: white;
+        }
+
+        .secondary {
+            background: #eceff1;
+            color: #222;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 18px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+        }
+
+        .task {
+            border: 2px solid #e1e6ec;
+            border-radius: 14px;
+            padding: 18px;
+        }
+
+        .task h3 {
+            margin-top: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        #trackingTable {
+            overflow-x: auto;
+        }
+
+        #trackingTable table {
+            min-width: 900px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background: #e3f2fd;
+        }
+
+        .status {
+            font-size: 24px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .teacher-name {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 8px;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 25px;
+            color: #666;
+        }
+
+
+        .student-box {
+            max-width: 720px;
+            margin: 0 auto;
+        }
+
+        .student-info {
+            background: #e3f2fd;
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 18px;
+            line-height: 1.9;
+        }
+
+        .question-box {
+            background: #f8fafc;
+            border: 2px solid #e1e6ec;
+            border-radius: 12px;
+            padding: 16px;
+            margin: 15px 0;
+            font-size: 18px;
+            white-space: pre-wrap;
+        }
+
+        .student-link {
+            font-size: 14px;
+            padding: 8px 10px;
+        }
+
+        @media (max-width: 700px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 25px;
+            }
+        }
+
+        .worksheet-builder {
+            margin-top: 12px;
+        }
+        .worksheet-question {
+            border: 2px solid #e1e6ec;
+            border-radius: 12px;
+            padding: 14px;
+            margin: 12px 0;
+            background: #fafcff;
+        }
+        .worksheet-branch {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        .worksheet-branch button,
+        .small-btn {
+            padding: 9px 12px;
+            font-size: 14px;
+        }
+        .student-worksheet-question {
+            border: 2px solid #e1e6ec;
+            border-radius: 12px;
+            padding: 16px;
+            margin: 16px 0;
+            background: #f8fafc;
+        }
+        .student-branch {
+            margin-top: 14px;
+        }
+        .student-branch .branch-text {
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+
+<body>
+
+    <header class="header">
+        <h1>📚 نظام المهام التعليمية</h1>
+        <p>سؤال الثلاثاء • ورقة عمل الخميس • متابعة إنجاز الطلاب</p>
+        <div class="teacher-name">
+            إعداد: الأستاذ عاصم فياض
+        </div>
+    </header>
+
+
+    <main class="container">
+
+        <!-- إعداد المعلم -->
+
+        <section class="card" id="setupSection">
+
+            <h2>👤 إعداد المعلم</h2>
+
+            <label for="teacherName">
+                اسم المعلم
+            </label>
+
+            <input
+                id="teacherName"
+                type="text"
+                placeholder="اكتب اسم المعلم"
+            >
+
+
+            <label for="className">
+                الصف / المادة
+            </label>
+
+            <input
+                id="className"
+                type="text"
+                placeholder="مثال: 10 أ - أحياء"
+            >
+
+
+            <label for="studentName">
+                اسم الطالب
+            </label>
+
+            <input
+                id="studentName"
+                type="text"
+                placeholder="اكتب اسم الطالب"
+            >
+
+
+            <div class="buttons">
+
+                <button
+                    class="primary"
+                    onclick="addStudent()"
+                >
+                    ➕ إضافة الطالب
+                </button>
+
+                <button
+                    class="green"
+                    onclick="finishSetup()"
+                >
+                    🚀 جهّز نظامي
+                </button>
+
+            </div>
+
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>الصف / المادة</th>
+                        <th>اسم الطالب</th>
+                        <th>حذف</th>
+                    </tr>
+                </thead>
+
+                <tbody id="setupStudents">
+                </tbody>
+
+            </table>
+
+        </section>
+
+
+        <!-- لوحة المعلم -->
+
+        <section
+            class="card hidden"
+            id="teacherPanel"
+        >
+
+            <h2>
+                👨‍🏫 لوحة المعلم
+            </h2>
+
+            <p id="welcomeTeacher"></p>
+
+
+            <label for="taskClass">
+                الصف / المادة
+            </label>
+
+            <select id="taskClass">
+            </select>
+
+
+            <div class="grid">
+
+                <div class="task">
+
+                    <h3>
+                        📘 سؤال الثلاثاء
+                    </h3>
+
+                    <label>
+                        السؤال
+                    </label>
+
+                    <textarea
+                        id="tuesdayQuestion"
+                        placeholder="اكتب سؤال الثلاثاء هنا..."
+                    ></textarea>
+
+                    <button
+                        class="primary"
+                        onclick="saveTuesdayTask()"
+                    >
+                        اعتماد سؤال الثلاثاء
+                    </button>
+
+                </div>
+
+
+                <div class="task">
+
+                    <h3>
+                        📄 ورقة عمل الخميس
+                    </h3>
+
+                    <label for="thursdayWorksheet">رابط ورقة عمل الخميس</label>
+
+                    <input
+                        id="thursdayWorksheet"
+                        type="text"
+                        placeholder="الصق رابط ورقة عمل الخميس هنا"
+                    >
+
+                    <div class="buttons">
+                        <button class="primary" type="button" onclick="saveThursdayTask()">اعتماد ورقة الخميس</button>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <h2 style="margin-top:30px">
+                📊 رصد الطلاب
+            </h2>
+
+            <div class="buttons">
+                <button class="secondary" type="button" onclick="printStudentQRCodes()">
+                    🖨️ طباعة أكواد QR للطلاب
+                </button>
+            </div>
+
+            <div id="trackingTable">
+            </div>
+
+        </section>
+
+
+
+        <!-- صفحة الطالب: اختبار سؤال الثلاثاء -->
+        <section class="card hidden student-box" id="studentPanel">
+            <h2>🧑‍🎓 صفحة الطالب</h2>
+            <div class="student-info">
+                <div><strong>اسم الطالب:</strong> <span id="studentPageName"></span></div>
+                <div><strong>الصف / المادة:</strong> <span id="studentPageClass"></span></div>
+            </div>
+
+            <h3>📘 سؤال الثلاثاء</h3>
+            <div class="question-box" id="studentTuesdayQuestion"></div>
+
+            <label for="studentTuesdayAnswer">إجابتك</label>
+            <textarea id="studentTuesdayAnswer" placeholder="اكتب إجابتك هنا..."></textarea>
+
+            <div class="buttons">
+                <button class="green" onclick="submitTuesdayAnswer()">✅ تسليم الإجابة</button>
+            </div>
+            <p id="studentSubmitMessage" style="font-weight:bold;margin-top:15px"></p>
+
+            <div id="studentThursdaySection" class="hidden" style="margin-top:28px;border-top:2px solid #e1e6ec;padding-top:20px">
+                <h3>📄 ورقة عمل الخميس</h3>
+                <div id="studentWorksheet"></div>
+                <div class="buttons">
+                    <button id="submitThursdayButton" class="green" onclick="submitThursdayAnswers()">✅ تسليم ورقة العمل</button>
+                </div>
+                <p id="studentThursdayMessage" style="font-weight:bold;margin-top:15px"></p>
+            </div>
+        </section>
+
+    </main>
+
+
+    <footer class="footer">
+        نظام المهام التعليمية
+        <br>
+        إعداد: الأستاذ عاصم فياض
+    </footer>
+
+
+<script>
+
+const API_URL = "https://script.google.com/macros/s/AKfycbyjwTebNJK_EJYqdqXkefpZaU7BCuD30-Ym-uyX2yBhHVqZ17VQza1IG9yx_FsZW7-L/exec";
+
+let students = [];
+
+const defaultStudents = [
+    { className: "عاشر (أ) – أحياء", name: "احمد رضوان محمد حسن", tuesday: false, thursday: false, answer: "" },
+    { className: "عاشر (أ) – أحياء", name: "احمد سائد هلال حسن", tuesday: false, thursday: false, answer: "" },
+    { className: "عاشر (أ) – أحياء", name: "انس شادي عبدالله ابو زريبي", tuesday: false, thursday: false, answer: "" },
+    { className: "عاشر (أ) – أحياء", name: "بهمت كايد بهجت حسن", tuesday: false, thursday: false, answer: "" },
+    { className: "عاشر (أ) – أحياء", name: "جمال فرج جمال حسن", tuesday: false, thursday: false, answer: "" },
+    { className: "عاشر (أ) – أحياء", name: "حسام اياد محمد حسن", tuesday: false, thursday: false, answer: "" },
+    { className: "عاشر (أ) – أحياء", name: "صهيب محمد شاهر حسن", tuesday: false, thursday: false, answer: "" },
+    { className: "عاشر (أ) – أحياء", name: "عمرو بشار شاهر حسن", tuesday: false, thursday: false, answer: "" },
+    { className: "عاشر (أ) – أحياء", name: "فايز احمد فايز اسعد", tuesday: false, thursday: false, answer: "" },
+    { className: "عاشر (أ) – أحياء", name: "قيس ايوب يحيى فرح", tuesday: false, thursday: false, answer: "" },
+    { className: "عاشر (أ) – أحياء", name: "مؤمن محمد رشادة عوده", tuesday: false, thursday: false, answer: "" },
+    { className: "عاشر (أ) – أحياء", name: "محمد هاشم صابر عثمان", tuesday: false, thursday: false, answer: "" },
+    { className: "عاشر (أ) – أحياء", name: "منصور علاء احسان ناصره", tuesday: false, thursday: false, answer: "" },
+    { className: "عاشر (أ) – أحياء", name: "موسى عبد موسى زيده", tuesday: false, thursday: false, answer: "" },
+    { className: "عاشر (أ) – أحياء", name: "نشأت بشار نشأت حسن", tuesday: false, thursday: false, answer: "" },
+    { className: "عاشر (أ) – أحياء", name: "نورالدين عبد الرحيم محمد حسن", tuesday: false, thursday: false, answer: "" },
+    { className: "عاشر (أ) – أحياء", name: "وليد فالح محمد سارة", tuesday: false, thursday: false, answer: "" },
+    { className: "عاشر (أ) – أحياء", name: "يامن امجد عبد بدران", tuesday: false, thursday: false, answer: "" },
+    { className: "عاشر (أ) – أحياء", name: "يزن حسني محمد ابو ريده", tuesday: false, thursday: false, answer: "" },
+    { className: "عاشر (أ) – أحياء", name: "يزن فرج حسن حسن", tuesday: false, thursday: false, answer: "" },
+    { className: "عاشر (أ) – أحياء", name: "يزيد فادي فتحي حسن", tuesday: false, thursday: false, answer: "" },
+    { className: "عاشر (ب) – أحياء", name: "احمد عبد الحميد ابراهيم حسن", tuesday: false, thursday: false, answer: "" },
+    { className: "عاشر (ب) – أحياء", name: "احمد ماهر فتحي حسن", tuesday: false, thursday: false, answer: "" },
+    { className: "عاشر (ب) – أحياء", name: "اسيد محمد جابر عوض", tuesday: false, thursday: false, answer: "" },
+    { className: "عاشر (ب) – أحياء", name: "امير اياد جمعه ابو ريده", tuesday: false, thursday: false, answer: "" },
+    { className: "عاشر (ب) – أحياء", name: "بكر بشير عبد المحسن العماوي", tuesday: false, thursday: false, answer: "" },
+    { className: "عاشر (ب) – أحياء", name: "ذياب عمر مرزوق عوده", tuesday: false, thursday: false, answer: "" },
+    { className: "عاشر (ب) – أحياء", name: "ريان لؤي محمود ابو ريده", tuesday: false, thursday: false, answer: "" },
+    { className: "عاشر (ب) – أحياء", name: "صفا محمد رشاد عوده", tuesday: false, thursday: false, answer: "" },
+    { className: "عاشر (ب) – أحياء", name: "صهيب باسم عبد الرؤوف ابو ريده", tuesday: false, thursday: false, answer: "" },
+    { className: "عاشر (ب) – أحياء", name: "عبد الرحمن زياد عبد المجيد سعاده", tuesday: false, thursday: false, answer: "" },
+    { className: "عاشر (ب) – أحياء", name: "عبد الرحمن مؤيد نعيم ريده", tuesday: false, thursday: false, answer: "" },
+    { className: "عاشر (ب) – أحياء", name: "فتح الله ايمن فتح الله ابو ريده", tuesday: false, thursday: false, answer: "" },
+    { className: "عاشر (ب) – أحياء", name: "ليث عبد الله جمعه ابو ريده", tuesday: false, thursday: false, answer: "" },
+    { className: "عاشر (ب) – أحياء", name: "مالك خالد مصطفى ابو ريده", tuesday: false, thursday: false, answer: "" },
+    { className: "عاشر (ب) – أحياء", name: "محمد بهاء عبدالله ابو ريده", tuesday: false, thursday: false, answer: "" },
+    { className: "عاشر (ب) – أحياء", name: "محمد رائد مصباح دعاس", tuesday: false, thursday: false, answer: "" },
+    { className: "عاشر (ب) – أحياء", name: "مصباح محمد مصباح ابو ريده", tuesday: false, thursday: false, answer: "" },
+    { className: "عاشر (ب) – أحياء", name: "نسيم محمد نسيم يونس", tuesday: false, thursday: false, answer: "" },
+    { className: "عاشر (ب) – أحياء", name: "نورالدين عاطف راجح كنعان", tuesday: false, thursday: false, answer: "" },
+    { className: "عاشر (ب) – أحياء", name: "يامن محمد اسماعيل فرج", tuesday: false, thursday: false, answer: "" },
+    { className: "عاشر (ب) – أحياء", name: "ينال صادق هاني كنعان", tuesday: false, thursday: false, answer: "" },
+    { className: "11 علمي – أحياء", name: "احمد نبيل عبد الحميد حسن", tuesday: false, thursday: false, answer: "" },
+    { className: "11 علمي – أحياء", name: "حذيفة سليمان عبد الحميد حسن", tuesday: false, thursday: false, answer: "" },
+    { className: "11 علمي – أحياء", name: "محمد نزيه عبد الحميد حسن", tuesday: false, thursday: false, answer: "" },
+    { className: "11 علمي – أحياء", name: "نعمان اسامه نعمان عبد الجواد", tuesday: false, thursday: false, answer: "" },
+    { className: "11 علمي – أحياء", name: "نور الدين محمد عبدالله ابو ريده", tuesday: false, thursday: false, answer: "" },
+    { className: "11 علمي – أحياء", name: "يامن محمد فايز حسن", tuesday: false, thursday: false, answer: "" },
+    { className: "11 علمي – أحياء", name: "يوسف حاتم يوسف ابو ريده", tuesday: false, thursday: false, answer: "" },
+    { className: "11 علمي – كيمياء", name: "احمد نبيل عبد الحميد حسن", tuesday: false, thursday: false, answer: "" },
+    { className: "11 علمي – كيمياء", name: "حذيفة سليمان عبد الحميد حسن", tuesday: false, thursday: false, answer: "" },
+    { className: "11 علمي – كيمياء", name: "محمد نزيه عبد الحميد حسن", tuesday: false, thursday: false, answer: "" },
+    { className: "11 علمي – كيمياء", name: "نعمان اسامه نعمان عبد الجواد", tuesday: false, thursday: false, answer: "" },
+    { className: "11 علمي – كيمياء", name: "نور الدين محمد عبدالله ابو ريده", tuesday: false, thursday: false, answer: "" },
+    { className: "11 علمي – كيمياء", name: "يامن محمد فايز حسن", tuesday: false, thursday: false, answer: "" },
+    { className: "11 علمي – كيمياء", name: "يوسف حاتم يوسف ابو ريده", tuesday: false, thursday: false, answer: "" },
+    { className: "12 علمي – أحياء", name: "اسيد اياد جمعه ابو ريده", tuesday: false, thursday: false, answer: "" },
+    { className: "12 علمي – أحياء", name: "اسيد مشاور عبد الغني ابو ريده", tuesday: false, thursday: false, answer: "" },
+    { className: "12 علمي – أحياء", name: "اوس حاتم ابراهيم حسن", tuesday: false, thursday: false, answer: "" },
+    { className: "12 علمي – أحياء", name: "براء مصطفى علي عواد", tuesday: false, thursday: false, answer: "" },
+    { className: "12 علمي – أحياء", name: "عبد الرحمن برهان اسماعيل فرج", tuesday: false, thursday: false, answer: "" },
+    { className: "12 علمي – أحياء", name: "عبد الرحمن جهاد عزت حسن", tuesday: false, thursday: false, answer: "" },
+    { className: "12 علمي – أحياء", name: "عبد الرحمن محمد عبد الله ابو ريده", tuesday: false, thursday: false, answer: "" },
+    { className: "12 علمي – أحياء", name: "مجاهد جبر محمود حسن", tuesday: false, thursday: false, answer: "" },
+    { className: "12 علمي – أحياء", name: "يامن نهاد سالم خالد", tuesday: false, thursday: false, answer: "" },
+    { className: "12 علمي – أحياء", name: "يزن ماهر حسن عوده", tuesday: false, thursday: false, answer: "" },
+    { className: "12 علمي – أحياء", name: "يزن مراد هاني ابو ريده", tuesday: false, thursday: false, answer: "" },
+    { className: "12 علمي – كيمياء", name: "اسيد اياد جمعه ابو ريده", tuesday: false, thursday: false, answer: "" },
+    { className: "12 علمي – كيمياء", name: "اسيد مشاور عبد الغني ابو ريده", tuesday: false, thursday: false, answer: "" },
+    { className: "12 علمي – كيمياء", name: "اوس حاتم ابراهيم حسن", tuesday: false, thursday: false, answer: "" },
+    { className: "12 علمي – كيمياء", name: "براء مصطفى علي عواد", tuesday: false, thursday: false, answer: "" },
+    { className: "12 علمي – كيمياء", name: "عبد الرحمن برهان اسماعيل فرج", tuesday: false, thursday: false, answer: "" },
+    { className: "12 علمي – كيمياء", name: "عبد الرحمن جهاد عزت حسن", tuesday: false, thursday: false, answer: "" },
+    { className: "12 علمي – كيمياء", name: "عبد الرحمن محمد عبد الله ابو ريده", tuesday: false, thursday: false, answer: "" },
+    { className: "12 علمي – كيمياء", name: "مجاهد جبر محمود حسن", tuesday: false, thursday: false, answer: "" },
+    { className: "12 علمي – كيمياء", name: "يامن نهاد سالم خالد", tuesday: false, thursday: false, answer: "" },
+    { className: "12 علمي – كيمياء", name: "يزن ماهر حسن عوده", tuesday: false, thursday: false, answer: "" },
+    { className: "12 علمي – كيمياء", name: "يزن مراد هاني ابو ريده", tuesday: false, thursday: false, answer: "" }
+];
+
+let tasks = {};
+
+
+// ==========================================
+// إضافة طالب
+// ==========================================
+
+function addStudent() {
+
+    const className =
+        document
+            .getElementById("className")
+            .value
+            .trim();
+
+    const studentName =
+        document
+            .getElementById("studentName")
+            .value
+            .trim();
+
+
+    if (!className) {
+
+        alert("اكتب الصف / المادة");
+
+        return;
+    }
+
+
+    if (!studentName) {
+
+        alert("اكتب اسم الطالب");
+
+        return;
+    }
+
+
+    const exists =
+        students.some(function(student) {
+
+            return (
+                student.className === className &&
+                student.name === studentName
+            );
+
+        });
+
+
+    if (exists) {
+
+        alert("هذا الطالب موجود مسبقًا");
+
+        return;
+    }
+
+
+    students.push({
+
+        className: className,
+
+        name: studentName,
+
+        tuesday: false,
+
+        thursday: false,
+
+        answer: ""
+
+    });
+
+
+    document
+        .getElementById("studentName")
+        .value = "";
+
+
+    renderSetupStudents();
+
+}
+
+
+// ==========================================
+// عرض الطلاب أثناء الإعداد
+// ==========================================
+
+function renderSetupStudents() {
+
+    const body =
+        document.getElementById(
+            "setupStudents"
+        );
+
+
+    body.innerHTML = "";
+
+
+    students.forEach(
+        function(student, index) {
+
+            const row =
+                document.createElement("tr");
+
+
+            row.innerHTML = `
+
+                <td>
+                    ${escapeHtml(student.className)}
+                </td>
+
+                <td>
+                    ${escapeHtml(student.name)}
+                </td>
+
+                <td>
+
+                    <button
+                        class="red"
+                        onclick="deleteStudent(${index})"
+                    >
+                        حذف
+                    </button>
+
+                </td>
+
+            `;
+
+
+            body.appendChild(row);
+
+        }
+    );
+
+}
+
+
+// ==========================================
+// حذف طالب
+// ==========================================
+
+function deleteStudent(index) {
+
+    students.splice(index, 1);
+
+    renderSetupStudents();
+
+}
+
+
+// ==========================================
+// تجهيز النظام
+// ==========================================
+
+function finishSetup() {
+
+    const teacherName =
+        document
+            .getElementById("teacherName")
+            .value
+            .trim();
+
+
+    if (!teacherName) {
+
+        alert("اكتب اسم المعلم");
+
+        return;
+    }
+
+
+    if (students.length === 0) {
+
+        alert(
+            "أدخل طالبًا واحدًا على الأقل"
+        );
+
+        return;
+    }
+
+
+    localStorage.setItem(
+        "teacherName",
+        teacherName
+    );
+
+
+    saveStudents();
+
+
+    document
+        .getElementById("setupSection")
+        .classList
+        .add("hidden");
+
+
+    document
+        .getElementById("teacherPanel")
+        .classList
+        .remove("hidden");
+
+
+    document
+        .getElementById("welcomeTeacher")
+        .textContent =
+        "مرحبًا " + teacherName;
+
+
+    loadClasses();
+
+    renderTracking();
+
+    syncAnswers();
+
+}
+
+
+// ==========================================
+// الصفوف
+// ==========================================
+
+function loadClasses() {
+
+    const select =
+        document.getElementById(
+            "taskClass"
+        );
+
+
+    select.innerHTML = "";
+
+
+    const classes =
+        [
+            ...new Set(
+                students.map(
+                    student =>
+                        student.className
+                )
+            )
+        ];
+
+
+    classes.forEach(
+        function(className) {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+
+            option.value =
+                className;
+
+
+            option.textContent =
+                className;
+
+
+            select.appendChild(
+                option
+            );
+
+        }
+    );
+
+
+    select.onchange =
+        function() {
+
+            loadCurrentTasks();
+
+            renderTracking();
+
+            syncAnswers();
+
+        };
+
+
+    loadCurrentTasks();
+
+}
+
+
+// ==========================================
+// سؤال الثلاثاء
+// ==========================================
+
+function saveTuesdayTask() {
+    const className = document.getElementById("taskClass").value;
+    const question = document.getElementById("tuesdayQuestion").value.trim();
+
+    if (!question) {
+        alert("اكتب سؤال الثلاثاء");
+        return;
+    }
+
+    const week = getCurrentSchoolWeek();
+    if (!tasks[className]) tasks[className] = {};
+    if (!tasks[className].weeks) tasks[className].weeks = {};
+    if (!tasks[className].weeks[week.key]) tasks[className].weeks[week.key] = {};
+
+    tasks[className].weeks[week.key].tuesday = question;
+    tasks[className].weeks[week.key].tuesdayDate = week.tuesdayKey;
+    saveTasks();
+    renderTracking();
+
+    alert("تم اعتماد سؤال الثلاثاء " + formatDateAr(week.tuesday) + " ✅");
+}
+
+// ==========================================
+// ورقة الخميس
+// ==========================================
+function saveThursdayTask() {
+    const className = document.getElementById("taskClass").value;
+    const url = document.getElementById("thursdayWorksheet").value.trim();
+
+    if (!url) {
+        alert("الصق رابط ورقة عمل الخميس");
+        return;
+    }
+
+    const week = getCurrentSchoolWeek();
+    if (!tasks[className]) tasks[className] = {};
+    if (!tasks[className].weeks) tasks[className].weeks = {};
+    if (!tasks[className].weeks[week.key]) tasks[className].weeks[week.key] = {};
+
+    tasks[className].weeks[week.key].thursday = url;
+    tasks[className].weeks[week.key].thursdayDate = week.thursdayKey;
+    saveTasks();
+    renderTracking();
+
+    alert("تم اعتماد ورقة الخميس " + formatDateAr(week.thursday) + " ✅");
+}
+
+// ==========================================
+// تحميل مهام الأسبوع الحالي
+// ==========================================
+function loadCurrentTasks() {
+    const className = document.getElementById("taskClass").value;
+    const week = getCurrentSchoolWeek();
+    const classTasks = tasks[className] || {};
+    const weekTasks = (classTasks.weeks && classTasks.weeks[week.key]) || {};
+
+    document.getElementById("tuesdayQuestion").value = weekTasks.tuesday || "";
+    document.getElementById("thursdayWorksheet").value = weekTasks.thursday || "";
+}
+
+// ==========================================
+// جدول الرصد
+// ==========================================
+
+function renderTracking() {
+    const className = document.getElementById("taskClass").value;
+    const classStudents = students.filter(student => student.className === className);
+    const weeks = getWeeksThroughCurrent();
+
+    let html = `<table><thead><tr><th>اسم الطالب</th>`;
+    weeks.forEach(week => {
+        html += `<th>الثلاثاء<br>${formatDateAr(week.tuesday)}</th>`;
+        html += `<th>الخميس<br>${formatDateAr(week.thursday)}</th>`;
+    });
+    html += `<th>رابط الطالب</th></tr></thead><tbody>`;
+
+    classStudents.forEach(student => {
+        html += `<tr><td>${escapeHtml(student.name)}</td>`;
+        weeks.forEach(week => {
+            const rec = getWeeklyStatus(student, week.key);
+            html += `<td class="status">${rec.tuesday ? "🟢" : "🔴"}</td>`;
+            html += `<td class="status">${rec.thursday ? "🟢" : "🔴"}</td>`;
+        });
+        html += `<td><button class="secondary student-link" onclick="openStudentPage('${encodeURIComponent(student.className)}','${encodeURIComponent(student.name)}')">فتح الرابط</button></td></tr>`;
+    });
+
+    html += `</tbody></table>`;
+    document.getElementById("trackingTable").innerHTML = html;
+}
+
+function getWeeklyStatus(student, weekKey) {
+    if (!student.weeklyStatus) student.weeklyStatus = {};
+    if (!student.weeklyStatus[weekKey]) {
+        student.weeklyStatus[weekKey] = { tuesday: false, thursday: false };
+    }
+    return student.weeklyStatus[weekKey];
+}
+
+// ==========================================
+// التخزين
+// ==========================================
+
+function saveStudents() {
+
+    localStorage.setItem(
+        "students",
+        JSON.stringify(students)
+    );
+
+}
+
+
+function saveTasks() {
+
+    localStorage.setItem(
+        "tasks",
+        JSON.stringify(tasks)
+    );
+
+}
+
+
+
+// ==========================================
+// التقويم الأسبوعي التلقائي
+// البداية: الثلاثاء 6/10/2026 والخميس 8/10/2026
+// ==========================================
+const FIRST_TUESDAY = new Date(2026, 9, 6, 12, 0, 0);
+const FIRST_MONDAY = new Date(2026, 9, 5, 0, 0, 0);
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+function dateKey(date) {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, "0");
+    const d = String(date.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
+}
+
+function formatDateAr(date) {
+    return `${date.getDate()}/${date.getMonth() + 1}`;
+}
+
+function getSchoolWeek(index) {
+    const tuesday = new Date(FIRST_TUESDAY.getTime() + index * 7 * DAY_MS);
+    const thursday = new Date(tuesday.getTime() + 2 * DAY_MS);
+    return {
+        index,
+        key: dateKey(tuesday),
+        tuesday,
+        thursday,
+        tuesdayKey: dateKey(tuesday),
+        thursdayKey: dateKey(thursday)
+    };
+}
+
+function getCurrentSchoolWeek(now = new Date()) {
+    let index = Math.floor((now.getTime() - FIRST_MONDAY.getTime()) / (7 * DAY_MS));
+    if (index < 0) index = 0;
+    return getSchoolWeek(index);
+}
+
+function getWeeksThroughCurrent() {
+    const current = getCurrentSchoolWeek();
+    const weeks = [];
+    for (let i = 0; i <= current.index; i++) weeks.push(getSchoolWeek(i));
+    return weeks;
+}
+
+function getWeekTasks(className, weekKey) {
+    const classTasks = tasks[className] || {};
+    if (classTasks.weeks && classTasks.weeks[weekKey]) return classTasks.weeks[weekKey];
+    return {};
+}
+
+function getPalestineParts(date = new Date()) {
+    const parts = new Intl.DateTimeFormat("en-CA", {
+        timeZone: "Asia/Hebron", year: "numeric", month: "2-digit", day: "2-digit",
+        hour: "2-digit", minute: "2-digit", second: "2-digit", hourCycle: "h23"
+    }).formatToParts(date);
+    const o = {};
+    parts.forEach(p => { if (p.type !== "literal") o[p.type] = p.value; });
+    return {
+        dateKey: `${o.year}-${o.month}-${o.day}`,
+        hour: Number(o.hour), minute: Number(o.minute), second: Number(o.second)
+    };
+}
+
+function isOpenByPalestineTime(openDateKey, hour = 18) {
+    const now = getPalestineParts();
+    if (now.dateKey > openDateKey) return true;
+    if (now.dateKey < openDateKey) return false;
+    return now.hour >= hour;
+}
+
+function mondayOpenKey(week) {
+    return dateKey(new Date(week.tuesday.getTime() - DAY_MS));
+}
+
+function tuesdayOpenKey(week) {
+    return week.tuesdayKey;
+}
+
+// ==========================================
+// صفحة الطالب - سؤال الثلاثاء (مرتبطة بـ Google Sheets)
+// ==========================================
+
+
+function buildStudentUrl(className, studentName) {
+    const week = getCurrentSchoolWeek();
+    const weekTasks = getWeekTasks(className, week.key);
+    const question = weekTasks.tuesday || "";
+    const worksheetUrl = weekTasks.thursday || "";
+
+    const url = new URL(window.location.href);
+    url.search = "";
+    url.hash = "";
+    url.searchParams.set("mode", "student");
+    url.searchParams.set("class", className);
+    url.searchParams.set("student", studentName);
+    url.searchParams.set("wk", week.key);
+    if (question) url.searchParams.set("q", question);
+    if (worksheetUrl) url.searchParams.set("w", worksheetUrl);
+
+    return url.toString();
+}
+
+function printStudentQRCodes() {
+    const className = document.getElementById("taskClass").value;
+    const classStudents = students.filter(student => student.className === className);
+
+    if (!classStudents.length) {
+        alert("لا يوجد طلاب في هذا الصف");
+        return;
+    }
+
+    if (typeof QRCode === "undefined") {
+        alert("تعذر تحميل مولّد QR. تأكد من اتصال الإنترنت ثم أعد المحاولة.");
+        return;
+    }
+
+    const printWindow = window.open("", "_blank");
+    if (!printWindow) {
+        alert("اسمح بالنوافذ المنبثقة ثم أعد المحاولة");
+        return;
+    }
+
+    printWindow.document.write(`
+        <!DOCTYPE html>
+        <html lang="ar" dir="rtl">
+        <head>
+            <meta charset="UTF-8">
+            <title>أكواد QR - ${escapeHtml(className)}</title>
+            <style>
+                @page { size: A4; margin: 10mm; }
+                body { font-family: Arial, Tahoma, sans-serif; margin: 0; color: #111; }
+                h1 { text-align: center; font-size: 20px; margin: 0 0 12px; }
+                .sheet { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8mm; }
+                .card { border: 1.5px dashed #777; border-radius: 10px; padding: 8px; text-align: center; break-inside: avoid; }
+                .name { font-weight: bold; font-size: 15px; margin-bottom: 3px; }
+                .class { font-size: 12px; margin-bottom: 7px; }
+                .qr { display: flex; justify-content: center; min-height: 128px; align-items: center; }
+                .hint { font-size: 11px; margin-top: 6px; }
+                @media print { .no-print { display:none; } }
+            </style>
+        </head>
+        <body>
+            <h1>نظام المهام التعليمية — أكواد الطلاب<br>${escapeHtml(className)}</h1>
+            <div class="sheet" id="qrSheet"></div>
+        </body>
+        </html>
+    `);
+    printWindow.document.close();
+
+    const sheet = printWindow.document.getElementById("qrSheet");
+
+    classStudents.forEach((student, index) => {
+        const card = printWindow.document.createElement("div");
+        card.className = "card";
+
+        const name = printWindow.document.createElement("div");
+        name.className = "name";
+        name.textContent = student.name;
+
+        const cls = printWindow.document.createElement("div");
+        cls.className = "class";
+        cls.textContent = className;
+
+        const qr = printWindow.document.createElement("div");
+        qr.className = "qr";
+        qr.id = "qr_" + index;
+
+        const hint = printWindow.document.createElement("div");
+        hint.className = "hint";
+        hint.textContent = "امسح الكود لفتح صفحتك";
+
+        card.appendChild(name);
+        card.appendChild(cls);
+        card.appendChild(qr);
+        card.appendChild(hint);
+        sheet.appendChild(card);
+
+        new QRCode(qr, {
+            text: buildStudentUrl(student.className, student.name),
+            width: 128,
+            height: 128,
+            correctLevel: QRCode.CorrectLevel.M
+        });
+    });
+
+    setTimeout(() => {
+        printWindow.focus();
+        printWindow.print();
+    }, 700);
+}
+
+function openStudentPage(encodedClass, encodedName) {
+    const className = decodeURIComponent(encodedClass);
+    const studentName = decodeURIComponent(encodedName);
+    const week = getCurrentSchoolWeek();
+    const weekTasks = getWeekTasks(className, week.key);
+
+    if (!weekTasks.tuesday && !weekTasks.thursday) {
+        alert("اعتمد سؤال الثلاثاء أو ورقة الخميس لهذا الأسبوع أولًا");
+        return;
+    }
+
+    window.open(buildStudentUrl(className, studentName), "_blank");
+}
+
+function loadStudentMode() {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("mode") !== "student") return false;
+
+    const className = params.get("class") || "";
+    const studentName = params.get("student") || "";
+    const weekKey = params.get("wk") || getCurrentSchoolWeek().key;
+    const weekIndex = Math.max(0, Math.round((new Date(weekKey + "T12:00:00").getTime() - FIRST_TUESDAY.getTime()) / (7 * DAY_MS)));
+    const week = getSchoolWeek(weekIndex);
+    const questionFromLink = params.get("q") || "";
+    const worksheetUrl = params.get("w") || "";
+
+    document.getElementById("setupSection").classList.add("hidden");
+    document.getElementById("teacherPanel").classList.add("hidden");
+    document.getElementById("studentPanel").classList.remove("hidden");
+    document.getElementById("studentPageName").textContent = studentName;
+    document.getElementById("studentPageClass").textContent = className;
+
+    const questionBox = document.getElementById("studentTuesdayQuestion");
+    const answerBox = document.getElementById("studentTuesdayAnswer");
+    const submitBtn = document.querySelector("#studentPanel .green");
+    const tuesdayOpen = isOpenByPalestineTime(mondayOpenKey(week), 18);
+
+    if (!questionFromLink) {
+        questionBox.textContent = "لم يتم اعتماد سؤال الثلاثاء لهذا الأسبوع بعد.";
+        answerBox.classList.add("hidden");
+        submitBtn.classList.add("hidden");
+    } else if (!tuesdayOpen) {
+        questionBox.textContent = `🔒 يفتح سؤال الثلاثاء يوم الاثنين ${formatDateAr(new Date(week.tuesday.getTime() - DAY_MS))} الساعة 6:00 مساءً.`;
+        answerBox.classList.add("hidden");
+        submitBtn.classList.add("hidden");
+    } else {
+        questionBox.textContent = questionFromLink;
+        answerBox.classList.remove("hidden");
+        submitBtn.classList.remove("hidden");
+    }
+
+    const thursdayOpen = isOpenByPalestineTime(tuesdayOpenKey(week), 18);
+    if (worksheetUrl && !thursdayOpen) {
+        const section = document.getElementById("studentThursdaySection");
+        section.classList.remove("hidden");
+        document.getElementById("studentWorksheet").innerHTML = `<div class="question-box">🔒 تفتح ورقة عمل الخميس يوم الثلاثاء ${formatDateAr(week.tuesday)} الساعة 6:00 مساءً.</div>`;
+        document.getElementById("submitThursdayButton").classList.add("hidden");
+    } else {
+        renderStudentWorksheet(worksheetUrl);
+    }
+
+    return true;
+}
+
+async function submitTuesdayAnswer() {
+    const params = new URLSearchParams(window.location.search);
+    const className = params.get("class") || "";
+    const studentName = params.get("student") || "";
+    const question =
+        params.get("q") ||
+        document.getElementById("studentTuesdayQuestion").textContent ||
+        "";
+    const weekKey = params.get("wk") || getCurrentSchoolWeek().key;
+    const weekIndex = Math.max(0, Math.round((new Date(weekKey + "T12:00:00").getTime() - FIRST_TUESDAY.getTime()) / (7 * DAY_MS)));
+    const week = getSchoolWeek(weekIndex);
+    if (!isOpenByPalestineTime(mondayOpenKey(week), 18)) {
+        alert("سؤال الثلاثاء لم يفتح بعد");
+        return;
+    }
+
+    const answer =
+        document.getElementById("studentTuesdayAnswer").value.trim();
+
+    if (!answer) {
+        alert("اكتب إجابتك أولًا");
+        return;
+    }
+
+    const button = document.querySelector("#studentPanel .green");
+    const message = document.getElementById("studentSubmitMessage");
+
+    button.disabled = true;
+    button.textContent = "جارٍ التسليم...";
+    message.textContent = "";
+
+    try {
+        const response = await fetch(API_URL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "text/plain;charset=utf-8"
+            },
+            body: JSON.stringify({
+                studentId: className + "|" + studentName,
+                studentName: studentName,
+                className: className,
+                taskType: "tuesday",
+                weekKey: weekKey,
+                taskDate: week.tuesdayKey,
+                question: question,
+                answer: answer
+            })
+        });
+
+        const result = await response.json();
+
+        if (!result.success) {
+            throw new Error(result.message || "تعذر حفظ الإجابة");
+        }
+
+        message.textContent = "تم تسليم إجابتك بنجاح إلى المعلم ✅";
+        button.textContent = "تم التسليم ✅";
+
+    } catch (error) {
+        console.error(error);
+        message.textContent =
+            "تعذر إرسال الإجابة. تحقق من الإنترنت وحاول مرة أخرى.";
+        button.disabled = false;
+        button.textContent = "✅ تسليم الإجابة";
+    }
+}
+
+
+
+function renderStudentWorksheet(worksheetUrl) {
+    const section = document.getElementById("studentThursdaySection");
+    const box = document.getElementById("studentWorksheet");
+
+    if (!worksheetUrl) {
+        section.classList.add("hidden");
+        box.innerHTML = "";
+        return;
+    }
+
+    section.classList.remove("hidden");
+    document.getElementById("submitThursdayButton").classList.remove("hidden");
+
+    box.innerHTML = `
+        <div class="student-worksheet-question">
+            <div class="buttons">
+                <button type="button"
+                        class="primary"
+                        onclick="window.open('${escapeJsString(worksheetUrl)}','_blank')">
+                    🔗 فتح سؤال ورقة العمل
+                </button>
+            </div>
+
+            <label for="studentThursdayAnswer">إجابتك</label>
+            <textarea id="studentThursdayAnswer"
+                      placeholder="اكتب إجابتك هنا..."></textarea>
+        </div>`;
+}
+
+async function submitThursdayAnswers() {
+    const params = new URLSearchParams(window.location.search);
+    const className = params.get("class") || "";
+    const studentName = params.get("student") || "";
+    const worksheetUrl = params.get("w") || "";
+    const weekKey = params.get("wk") || getCurrentSchoolWeek().key;
+    const weekIndex = Math.max(0, Math.round((new Date(weekKey + "T12:00:00").getTime() - FIRST_TUESDAY.getTime()) / (7 * DAY_MS)));
+    const week = getSchoolWeek(weekIndex);
+    if (!isOpenByPalestineTime(tuesdayOpenKey(week), 18)) {
+        alert("ورقة عمل الخميس لم تفتح بعد");
+        return;
+    }
+    const answer = document.getElementById("studentThursdayAnswer").value.trim();
+
+    if (!answer) {
+        alert("اكتب إجابتك أولًا");
+        return;
+    }
+
+    const button = document.getElementById("submitThursdayButton");
+    const message = document.getElementById("studentThursdayMessage");
+
+    button.disabled = true;
+    button.textContent = "جارٍ التسليم...";
+    message.textContent = "";
+
+    try {
+        const response = await fetch(API_URL, {
+            method: "POST",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify({
+                studentId: className + "|" + studentName,
+                studentName: studentName,
+                className: className,
+                taskType: "thursday",
+                weekKey: weekKey,
+                taskDate: week.thursdayKey,
+                question: worksheetUrl,
+                answer: answer
+            })
+        });
+
+        const result = await response.json();
+
+        if (!result.success) {
+            throw new Error(result.message || "تعذر حفظ ورقة العمل");
+        }
+
+        message.textContent = "تم تسليم إجابتك بنجاح إلى المعلم ✅";
+        button.textContent = "تم التسليم ✅";
+
+    } catch (error) {
+        console.error(error);
+        message.textContent = "تعذر إرسال الإجابة. تحقق من الإنترنت وحاول مرة أخرى.";
+        button.disabled = false;
+        button.textContent = "✅ تسليم ورقة العمل";
+    }
+}
+
+function escapeJsString(text) {
+    return String(text || "")
+        .replace(/\\/g, "\\\\")
+        .replace(/'/g, "\\'")
+        .replace(/\r/g, "")
+        .replace(/\n/g, "");
+}
+
+// ==========================================
+// مزامنة لوحة المعلم مع Google Sheets
+// ==========================================
+
+async function syncAnswers() {
+    try {
+        const response = await fetch(API_URL + "?action=getAnswers&_=" + Date.now());
+        const result = await response.json();
+        if (!result.success || !Array.isArray(result.answers)) return;
+
+        // لا نمسح الأسابيع السابقة؛ نحدّث فقط السجل التراكمي.
+        result.answers.forEach(function(item) {
+            const taskType = String(item.taskType || "").toLowerCase();
+            const student = students.find(function(s) {
+                return s.className === item.className && s.name === item.studentName;
+            });
+            if (!student) return;
+
+            let weekKey = item.weekKey || "";
+            if (!weekKey && item.taskDate) {
+                const d = new Date(String(item.taskDate).slice(0,10) + "T12:00:00");
+                const idx = Math.max(0, Math.round((d.getTime() - FIRST_TUESDAY.getTime()) / (7 * DAY_MS)));
+                weekKey = getSchoolWeek(idx).key;
+            }
+
+            // توافق مع الردود التي لا يعيد فيها Apps Script الحقول الجديدة:
+            // نطابق السؤال/الرابط مع المهمة المحفوظة لكل أسبوع.
+            if (!weekKey && item.question) {
+                const classTasks = tasks[student.className] || {};
+                const weeksObj = classTasks.weeks || {};
+                Object.keys(weeksObj).some(function(key) {
+                    const wt = weeksObj[key] || {};
+                    if ((taskType === "tuesday" && wt.tuesday === item.question) ||
+                        (taskType === "thursday" && wt.thursday === item.question)) {
+                        weekKey = key;
+                        return true;
+                    }
+                    return false;
+                });
+            }
+
+            if (!weekKey) weekKey = getCurrentSchoolWeek().key;
+            const rec = getWeeklyStatus(student, weekKey);
+            if (taskType === "tuesday") rec.tuesday = true;
+            if (taskType === "thursday") rec.thursday = true;
+        });
+
+        saveStudents();
+        if (!document.getElementById("teacherPanel").classList.contains("hidden")) renderTracking();
+    } catch (error) {
+        console.error("تعذر تحديث إجابات الطلاب:", error);
+    }
+}
+
+// ==========================================
+// حماية النصوص
+// ==========================================
+
+function escapeHtml(text) {
+
+    const div =
+        document.createElement("div");
+
+    div.textContent =
+        text;
+
+    return div.innerHTML;
+
+}
+
+
+
+function escapeAttribute(text) {
+    return String(text || "")
+        .replace(/&/g, "&amp;")
+        .replace(/"/g, "&quot;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+}
+
+// ==========================================
+// تحميل البيانات عند فتح الصفحة
+// ==========================================
+
+window.addEventListener(
+    "load",
+    function() {
+
+        const savedStudents =
+            localStorage.getItem(
+                "students"
+            );
+
+
+        const savedTasks =
+            localStorage.getItem(
+                "tasks"
+            );
+
+        const savedTeacherName =
+            localStorage.getItem(
+                "teacherName"
+            );
+
+        document
+            .getElementById("teacherName")
+            .value = savedTeacherName || "عاصم فياض";
+
+
+        if (savedStudents) {
+
+            students =
+                JSON.parse(
+                    savedStudents
+                );
+
+        } else {
+
+            // أول تشغيل: تحميل قائمة الطلاب الجاهزة (78 سجلًا)
+            students = defaultStudents.map(function(student) {
+                return { ...student };
+            });
+
+            saveStudents();
+
+        }
+
+
+        if (savedTasks) {
+            tasks = JSON.parse(savedTasks);
+
+            // ترحيل تلقائي للمهام القديمة إلى الأسبوع الحالي دون فقدها.
+            const migrationWeek = getCurrentSchoolWeek();
+            Object.keys(tasks).forEach(function(className) {
+                const ct = tasks[className] || {};
+                if (!ct.weeks) ct.weeks = {};
+                if (!ct.weeks[migrationWeek.key]) ct.weeks[migrationWeek.key] = {};
+                if (ct.tuesday && !ct.weeks[migrationWeek.key].tuesday) ct.weeks[migrationWeek.key].tuesday = ct.tuesday;
+                if (typeof ct.thursday === "string" && ct.thursday && !ct.weeks[migrationWeek.key].thursday) ct.weeks[migrationWeek.key].thursday = ct.thursday;
+            });
+            saveTasks();
+        }
+
+
+        if (loadStudentMode()) {
+            return;
+        }
+
+        renderSetupStudents();
+
+        // تحديث مركزي دوري لحالات التسليم في لوحة المعلم
+        setInterval(function() {
+            if (!document.getElementById("teacherPanel").classList.contains("hidden")) {
+                syncAnswers();
+            }
+        }, 10000);
+
+    }
+);
+
+</script>
+
+</body>
+
+</html>
